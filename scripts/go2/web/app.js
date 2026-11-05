@@ -16,7 +16,7 @@ const fragment=`precision highp float; varying vec3 vRgb; varying float vSeen; v
 function error(e){console.error(e);$('loadState').hidden=false;$('loadState').textContent='表示できませんでした：'+e.message+'。ページを再読み込みしてください。';}
 function resize(){if(!renderer)return;const {width,height}=viewport.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();}
 function dispose(obj){if(!obj)return;scene.remove(obj);obj.geometry?.dispose();obj.material?.dispose();}
-function setTime(t){if(!info)return;t=Math.min(info.duration,Math.max(0,t));$('time').value=t;uniforms.uTime.value=t;$('timeText').textContent=`${t.toFixed(1)} / ${info.duration.toFixed(1)} 秒`;let idx=0;while(idx+1<info.trajectory.length&&info.trajectory[idx+1][0]<=t)idx++;track.geometry.setDrawRange(0,idx+1);marker.position.set(...info.trajectory[idx].slice(1));if(!playing)lastCount=0;syncRgb(t);}
+function setTime(t){if(!info)return;t=Math.min(info.duration,Math.max(0,t));$('time').value=t;uniforms.uTime.value=Math.fround(t);$('timeText').textContent=`${t.toFixed(1)} / ${info.duration.toFixed(1)} 秒`;let idx=0;while(idx+1<info.trajectory.length&&info.trajectory[idx+1][0]<=t)idx++;track.geometry.setDrawRange(0,idx+1);marker.position.set(...info.trajectory[idx].slice(1));if(!playing)lastCount=0;syncRgb(t);}
 function stop(){playing=false;$('play').textContent='▶ 再生';$('play').setAttribute('aria-label','蓄積を再生');}
 function showFullHeight(){
  const low=$('zlow'),high=$('zhigh');
