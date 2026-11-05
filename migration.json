@@ -1,0 +1,179 @@
+{
+  "sources": {
+    "go2-experiment-viewer": "39179b5b37045dc4a1618e1dfdb5da78574092cb",
+    "starling2-flight-results": "50eafccab50aa71856ba9582b3ff8706414fb211",
+    "go2-remote": "efaf2d93cd6030048651c469f4e8f01db0df4f8c"
+  },
+  "files": [
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/app.js",
+      "sha256": "ca7d3ed4e8660a2c9dc283c217dbf8e1eb5038ca57d318b3793364957297e3b1",
+      "bytes": 17078
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/manifest.json",
+      "sha256": "734d7561c60070bf70f026c1bec54b21b1681399b7057b8eb83114db40e3d6fd",
+      "bytes": 117646
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb.json",
+      "sha256": "2e39278ca60f406a5d2878253c45ed15a5c6215b82ab88462c8d51ace2e61f02",
+      "bytes": 73040
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb3.mjpeg.part000",
+      "sha256": "072ef8a4cf3d6fe80c803d56ca39df30810983c3b22c49f2d9ac702aa4a232fc",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb3.mjpeg.part001",
+      "sha256": "ac3cd589940c8628476fb3c5ba66bb48aa58e18e2cdf2bc0abcc351db60f216e",
+      "bytes": 1994840
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb4.mjpeg.part000",
+      "sha256": "1f2a0e5b46365971fcc0702ef5a6efbd0e22730144306feb38bfc65ea355fb55",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb4.mjpeg.part001",
+      "sha256": "3ee4090d522d951220bf0a2c029c9add4f5fdcabc19bd89711850289865adecc",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb4.mjpeg.part002",
+      "sha256": "64804f279014ee3ee8e3f4f97d243488c84f391bb43109b695577f4052f7112b",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb4.mjpeg.part003",
+      "sha256": "0b52be4c199b8b11cbb48777f3d197e8778c789505dc99afec1749af6ae3d6d6",
+      "bytes": 5195063
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb6.mjpeg.part000",
+      "sha256": "e5e35b289e04e99b53a9776a91cef5423f467e49ab01a0c6a721f159652ce25d",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb6.mjpeg.part001",
+      "sha256": "0536c846a7674b4fef8bb551d1adbda0c00143ea48447ec89bf2216b071dc47d",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb6.mjpeg.part002",
+      "sha256": "3913bf98470c7da69854c396e3445d79dcc186427b0a9a67703e8153a4b91d68",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/rgb6.mjpeg.part003",
+      "sha256": "5f8e458b9b199a3d314d788289814c29b82b56c5cd07de23938916595e1449e2",
+      "bytes": 7700055
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run3.bin",
+      "sha256": "bd57d3529c8aff2675d72966304ef2e0251659466625df8086dcf2fe2bec6408",
+      "bytes": 3802224
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run4.bin.part000",
+      "sha256": "3d3d11d82b3b7e57ddc3fef7a4ccbaf91b6f2340973f5d68eac35926ca4b3bb0",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run4.bin.part001",
+      "sha256": "bad19ffdac4de13c50da099adc7fde7a62b3fe65f553f833b1991014a9b6b2a2",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run4.bin.part002",
+      "sha256": "3434bc59bec9dd9e59dc0f44330499b3b9d29f35f678e3d11260d97a5d5d0e13",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run4.bin.part003",
+      "sha256": "30b358893605b147a2a8eb169f86dba70d4357e13fe0636a523687558fe882a9",
+      "bytes": 353648
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part000",
+      "sha256": "83c5fbe33f1d60b646e2fc450f6245d0d92b93f2b87c154ef10bc2d224dc0ba3",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part001",
+      "sha256": "940ec99a871fdc695d2c55c9ea34cec4e6d486279c27b0e0f53a7972db5abc87",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part002",
+      "sha256": "cf137d29b1945db128fe8d4f2082034210aa71a2f29c8997f691c1a76fc50e08",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part003",
+      "sha256": "9059d559133da09af0b4bbaa9d756456971ec0b4b8311447034a3cc27ebb7591",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part004",
+      "sha256": "28b4a5a63c73f602c93eaa943d6b3751c35c584ff4abb79b76049dbd7137800c",
+      "bytes": 8388608
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/data/run6.bin.part005",
+      "sha256": "2b76e96b58786396cc24f3bb44febc224c5d18dd9d15758e905445e41b2917fa",
+      "bytes": 295664
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/index.html",
+      "sha256": "2d69e6c1c09e0925c2e3c37616df216f432de6155df1d85152716ea6513937cd",
+      "bytes": 6568
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/style.css",
+      "sha256": "0158732859fb5814f38acce5de3685c967f9d9ddb62b8710828593ed64528fa4",
+      "bytes": 7741
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/title.txt",
+      "sha256": "8e204b2626d26f75bd73431ad49d1bcdb99b2dc011a1fcb1423065017fcf0895",
+      "bytes": 32
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/vendor/OrbitControls.js",
+      "sha256": "80efaadea4f8a636a65fb0bd08bfef62f3d93a0bb94e2e7500f23176c5c07f4e",
+      "bytes": 32134
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/vendor/THREE-LICENSE.txt",
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454",
+      "bytes": 1081
+    },
+    {
+      "path": "go2/measurements/2026-10-16_shizuoka/vendor/three.module.js",
+      "sha256": "89074684ade72d694575eed82346b55cd11a48f06dc9e368f427d3858b220977",
+      "bytes": 1314680
+    },
+    {
+      "path": "starling2/measurements/2026-10-22_ridge4m/data.js",
+      "sha256": "dadbfe91313bee20661f681271af05a1a2baa38a356f6f2a4f46c0b1911a50c6",
+      "bytes": 43390362
+    },
+    {
+      "path": "starling2/measurements/2026-10-22_ridge4m/index.html",
+      "sha256": "3a181b86e03cee087040e07e579552c1639e2fcb3f6fdd2fc4b4e74a811451ab",
+      "bytes": 15413
+    },
+    {
+      "path": "starling2/measurements/2026-10-22_ridge4m/measurement.json",
+      "sha256": "6c822769836db5cc678aa2c80bdb3c525ae521a951229190fdbe703bcb1bf06a",
+      "bytes": 575
+    },
+    {
+      "path": "starling2/measurements/2026-10-22_ridge4m/title.txt",
+      "sha256": "e64c7e5613c6069b0b74b9b91846a8825f963ae81f8fe791fc428777a771b7a7",
+      "bytes": 43
+    }
+  ]
+}

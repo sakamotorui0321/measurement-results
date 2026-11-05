@@ -1,0 +1,13 @@
+{
+  "experiment": "Starling2 2026-10-22 approximately 4m exploration",
+  "cloud_points": 646636,
+  "red_points": 2826,
+  "groups": 58,
+  "observations": 1031,
+  "color_frames": 342,
+  "default_color": "rgb",
+  "data_sha256": "dadbfe91313bee20661f681271af05a1a2baa38a356f6f2a4f46c0b1911a50c6",
+  "source_html_sha256": "7fbbf78310eb785023b494d9f6cbdd6b7cac1f5470ce34cdc8b5232b45b13e6e",
+  "coordinate": "Along flight / left / height relative to initial vehicle, meters",
+  "notes": "Derived visualization data; approximate mount and VIO; not independently accuracy-validated"
+}

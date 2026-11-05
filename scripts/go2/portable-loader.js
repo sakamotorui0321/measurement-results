@@ -1,0 +1,4 @@
+const pending=new Map();
+window.__portableData=(key,encoded)=>{const job=pending.get(key);if(!job)return;try{const text=atob(encoded),bytes=new Uint8Array(text.length);for(let i=0;i<text.length;i++)bytes[i]=text.charCodeAt(i);job.resolve(bytes);}catch(e){job.reject(e);}};
+window.portableFetch=async key=>{if(!assetFiles[key])throw new Error('同梱データがありません：'+key);const bytes=await new Promise((resolve,reject)=>{const script=document.createElement('script');pending.set(key,{resolve,reject});script.src=assetFiles[key];script.onerror=()=>{pending.delete(key);script.remove();reject(new Error('フォルダーをすべて展開してください：'+key));};script.onload=()=>{pending.delete(key);script.remove();};document.head.append(script);});return new Response(bytes);};
+const moduleUrl=source=>URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
