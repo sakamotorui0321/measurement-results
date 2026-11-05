@@ -11,13 +11,12 @@ import subprocess
 import tempfile
 from zoneinfo import ZoneInfo
 
+from starling2_runtime import weights_for, yolo_python
 from build_site import VIDEOS, render
 from catalog import ROOT, MEASUREMENTS, rebuild
 
 STAGES = ROOT/'scripts/starling2'
 WS = Path(os.environ.get('STARLING2_WS', Path.home()/'agricultural_support_ws'))
-WEIGHTS = Path(os.environ.get('STARLING2_WEIGHTS', Path.home()/'.local/share/measurement-results/tomato_flower_yolov8n.pt'))
-YOLO = Path(os.environ.get('STARLING2_YOLO_PYTHON', Path.home()/'.venvs/go2-processor/bin/python'))
 PYTHON = '/usr/bin/python3'
 
 def read(path):
@@ -71,6 +70,8 @@ def calibration_for(exp, raw):
     return one(verified.values(),'録画に対応付けて検証済みの工場校正')
 
 def analyze(exp, raw, bag, work, site):
+    weights = weights_for(exp)
+    python = yolo_python()
     scripts = STAGES
     env = dict(os.environ,PYTHONNOUSERSITE='1',OPENBLAS_NUM_THREADS='3',OMP_NUM_THREADS='4')
     def run(*args):
@@ -78,9 +79,12 @@ def analyze(exp, raw, bag, work, site):
     cal = calibration_for(exp, raw)
     mount = exp/'config/mount.json'
     shutil.copyfile(mount if mount.is_file() else STAGES/'mount.json',work/'mount.json')
-    run('bash','-c','set -e; source /opt/ros/jazzy/setup.bash; source "$1/install/local_setup.bash"; shift; exec "$@"',
-        'extract',WS,PYTHON,scripts/'extract_flower_map_poses.py','--bag',bag,'--output',work/'poses.json')
-    run(YOLO,scripts/'detect_recorded_flowers.py','--weights',WEIGHTS,'--recording',raw,'--output',work/'detect')
+    if os.environ.get('STARLING2_WS'):
+        run('bash','-c','set -e; source /opt/ros/jazzy/setup.bash; source "$1/install/local_setup.bash"; shift; exec "$@"',
+            'extract',WS,PYTHON,scripts/'extract_flower_map_poses.py','--bag',bag,'--output',work/'poses.json')
+    else:
+        run(python,scripts/'extract_mcap_poses.py',bag,work/'poses.json')
+    run(python,scripts/'detect_recorded_flowers.py','--weights',weights,'--recording',raw,'--output',work/'detect')
     run(PYTHON,scripts/'localize_recorded_flowers.py','--recording',raw,'--detections',work/'detect/detections.csv',
         '--calibration',cal,'--same-device-confirmed','--output',work/'positions')
     if read(work/'positions/manifest.json')['statuses'].get('estimated',0):
@@ -106,7 +110,7 @@ def verify_reuse(exp,raw,bag,site,manifest):
     mount = exp/'config/mount.json'
     checks = {raw/name:meta['sha256'] for name,meta in detect['input_files'].items()}
     checks.update({bag/name:meta['sha256'] for name,meta in pose_source['files'].items()})
-    checks[WEIGHTS] = detect['weights']['sha256']
+    checks[weights_for(exp)] = detect['weights']['sha256']
     checks[calibration] = read(work/'positions/manifest.json')['calibration']['sha256']
     checks[mount if mount.is_file() else STAGES/'mount.json'] = sha(work/'mount.json')
     world = read(work/'world/manifest.json')
@@ -170,7 +174,9 @@ def record_result(exp, site, progress, manifest):
         append_link(exp.parent.parent/'INDEX.md',f'{exp.name} 統合ビューアー・動画4本',report)
 
 def import_experiment(experiment):
-    exp = experiment.resolve()
+    if re.match(r'^[A-Za-z]:[\\/]',str(experiment)):
+        experiment = Path(subprocess.check_output(['wslpath','-u',str(experiment)],text=True).strip())
+    exp = experiment.resolve(strict=True)
     raw, bag = inputs(exp)
     timestamp = raw.name[:17]
     name = re.sub(r'^\d{4}-\d\d-\d\d_\d{6}_','',exp.name)

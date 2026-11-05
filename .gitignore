@@ -6,3 +6,4 @@ __pycache__/
 /starling2/measurements/.*.lock
 /starling2/measurements/.import-*/
 /starling2/measurements/*_results/
+.starling2-setup.lock

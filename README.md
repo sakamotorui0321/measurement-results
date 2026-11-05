@@ -57,8 +57,33 @@ python3 scripts/import_measurement.py starling2 "/path/to/実験データ/starli
 標準の実験フォルダでは、動画4本を同じ研究室の「進捗/動画/実機/Starling2/日付_実験名/」にも保存します。それ以外の場所では実験の exports/ を使用します。保存先の親は STARLING2_VIDEO_ROOT で変更できます。解析途中のCSV・姿勢・点群・各段階の検証記録は実験の analysis/ 内の日時付きフォルダに残ります。再実行時は登録済みの同じ録画の結果を利用します。
 
 - 入力は確定済みの raw/voxl/recordings/realsense/ 内の録画（RGB・深度・時刻索引・clock.jsonl・同じ記録に結び付く calibration.json）と raw/pi/ 内の姿勢・時刻同期を含むROS bagです。raw/pc/FLIGHT_RESULT.json があれば記録IDを照合します。複数候補があり一意に特定できない場合は停止します。旧録画では、同一機体の確認記録と入力・校正ハッシュが一致する実験内の保存済み工場校正も利用できます。
-- このPCは設定済みです。ほかのUbuntuでは ROS 2 Jazzy、ビルド済みpx4_msgsを含むワークスペース、OpenCVのH.264対応、NumPy・SciPy・YOLO環境が必要です。変換は scripts/starling2_experiment.py から実行され、検出・深度投影・姿勢抽出・花のグループ化の実装も scripts/starling2/ に同梱しました（agricultural_support_ws の 91a928a を基にしています）。検出区間の水平移動が10 cm未満で進行方向を決められない場合は東を横軸とします。ROSメッセージの読み出しにはワークスペースの install 環境を使います。WSは STARLING2_WS（既定 ~/agricultural_support_ws）、YOLOのPythonは STARLING2_YOLO_PYTHON（既定 ~/.venvs/go2-processor/bin/python）、重みは STARLING2_WEIGHTS（既定 ~/.local/share/measurement-results/tomato_flower_yolov8n.pt）で設定できます。
 - 機体へのカメラ取付は従来の概測（水平・機首向き、前方3 cm・上方3 cm）を既定とし、実験側の config/mount.json を優先します。同じ向きと光学座標系を前提とし、取付条件が異なる場合は確認が必要です。花の位置は内部推定で、花群は同じ物理花であることを保証しません。
+
+#### ノートPCのUbuntu / WSL2から使う
+
+初回はUbuntu 24.04（x86_64）で取得します。既に取得している場合は、そのリポジトリで `git pull --ff-only` を実行してください。
+
+```bash
+git clone https://github.com/sakamotorui0321/measurement-results.git
+cd measurement-results
+```
+
+Ubuntuの基本パッケージが未導入の場合だけ、次を一度実行します。ROS環境を持たないノートPCでも、型定義を含む標準のStarling2 MCAPから姿勢を復元できます。
+
+```bash
+sudo apt install python3-venv python3-opencv python3-numpy python3-scipy python3-matplotlib python3-pil python3-psutil python3-yaml python3-requests
+```
+
+OneDriveで対象実験の raw フォルダを同期してください。花検出モデルは共有の `実験データ/starling2/2026-10-22_0217_ridge4m_flight/analysis/2026-10-24_155123_flower_detection/config/go2_original/tomato_flower_yolov8n.pt` を自動検出し、SHA-256を照合します。実験フォルダ単独で持ち運ぶ場合は、同じファイルをその実験の `config/` にコピーしてください。学習済みモデルと生録画はGitHubへのアップロード対象外です。
+
+```bash
+python3 scripts/import_measurement.py starling2 "/mnt/c/…/実験データ/starling2/日付_時刻_実験名"
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+WSLでは、Windowsのエクスプローラーからコピーした実験フォルダのフルパスも、引用符で囲んでそのまま指定できます。ブラウザで [このPCの測定一覧](http://127.0.0.1:8000/) を開きます。初回は互換性を確認した推論環境を探し、必要ならリポジトリ内の `.venv` にCPU版PyTorchとYOLO等を取得します（初回はインターネット接続が必要、検証環境では約1 GB）。事前に準備するには `bash scripts/setup_starling2.sh` を実行します。2回目からは同じ環境を利用します。
+
+解析にはこのリポジトリの `scripts/starling2/` を使います。既存のROS 2 Jazzy・PX4環境を明示的に使う場合は `STARLING2_WS`、推論用Pythonや別の重みを指定する場合は `STARLING2_YOLO_PYTHON`、`STARLING2_WEIGHTS` を設定できます。既定の検出モデルはデスクトップと同じです。
 
 **RGB・深度だけを確認する場合**は、従来通り個別録画とIDを指定できます。
 
