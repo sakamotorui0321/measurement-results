@@ -65,5 +65,5 @@ Python、OpenCV、NumPyが必要です。`frames.jsonl`, `status.json`, `color.y
 
 - Go2の静岡実験（2026-10-16、3・4・6回目）を `go2/measurements/2026-10-16_shizuoka/` に収録しています。
 - Starling2の約4 m探索飛行（2026-10-22）を `starling2/measurements/2026-10-22_ridge4m/` に収録しています。従来の解析条件は [Starling2の記録](starling2/README.md) を参照してください。
-- コピー時に各ファイルのサイズとSHA-256を照合しました。旧リポジトリは既存履歴とURLの案内を保持しています。今後の結果追加先はこのリポジトリです。
+- コピー時に各ファイルのサイズとSHA-256を照合しました。旧2リポジトリは2026-11-05に削除しました。旧サイトのURL・転送も終了しています。今後の結果追加先はこのリポジトリです。
 - Three.jsのライセンスは各Go2ビューアーの `vendor/THREE-LICENSE.txt` にあります。
