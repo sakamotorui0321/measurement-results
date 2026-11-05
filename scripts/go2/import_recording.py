@@ -81,13 +81,62 @@ def measurement(source, data, title):
     (data/'rgb.json').write_text(json.dumps({'1':dict(file='data/rgb.mjpeg', maxAge=.75,frames=frames)}))
 
 
+def static_measurement(source, data, title, config, audit):
+    import cv2
+    import numpy as np
+    from color_l2 import Colorizer, local_file
+    meta = json.loads((source/'manifest.json').read_text())
+    if meta['state'] != 'stopped':
+        raise ValueError('Stopped recording required')
+    origin = datetime.fromisoformat(meta['started_utc']).timestamp()
+    colorizer = Colorizer(source, config, audit)
+    low, high = np.full(3,np.inf), np.full(3,-np.inf)
+    n, duration = 0, 0
+    with (data/'points.bin').open('wb') as out, (data/'colors.bin').open('wb') as colors, (audit/'matches.jsonl').open('w') as log:
+        for number,row in enumerate(rows(source/'external-lidar.jsonl')):
+            rgb = colorizer.scan(row,number,log)
+            pts = np.asarray(row['points'],dtype='<f4').reshape(-1,3)
+            if not len(pts):
+                continue
+            t = max(0,row['received_unix']-origin)
+            if t < duration:
+                raise ValueError('L2 clock discontinuity')
+            duration = t
+            low, high = np.minimum(low,pts.min(axis=0)), np.maximum(high,pts.max(axis=0))
+            out.write(np.column_stack((pts,np.full(len(pts),t,dtype='<f4'))).astype('<f4').tobytes())
+            colors.write(rgb.tobytes())
+            n += len(pts)
+    if not n:
+        raise ValueError('Empty L2 recording')
+    frames = []
+    with (data/'rgb.mjpeg').open('wb') as out:
+        for frame in colorizer.frames:
+            with np.load(local_file(source,frame['file']),allow_pickle=False) as packet:
+                ok,jpg = cv2.imencode('.jpg',packet['color'])
+            if not ok:
+                raise ValueError('Cannot encode raw RGB preview')
+            t = frame['received_unix']-origin
+            frames.append(dict(t=t,offset=out.tell(),bytes=jpg.nbytes))
+            out.write(jpg.tobytes())
+            duration=max(duration,t)
+    run=dict(id=1,title=title,count=n,duration=duration,bounds=[low.tolist(),high.tolist()],
+             trajectory=[[0,0,0,0]],file='data/points.bin',colors='data/colors.bin')
+    (data/'manifest.json').write_text(json.dumps(dict(runs=[run])))
+    (data/'rgb.json').write_text(json.dumps({'1':dict(file='data/rgb.mjpeg',maxAge=.75,frames=frames)}))
+    colorizer.finish()
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('recording',type=Path)
     p.add_argument('output',type=Path)
     p.add_argument('--title',required=True)
     p.add_argument('--bag',type=Path,help='同時収録したbagセッション（data/*.db3）')
+    p.add_argument('--conditions',type=Path)
+    p.add_argument('--audit',type=Path)
     a = p.parse_args()
+    if bool(a.conditions) != bool(a.audit) or (a.audit and a.audit.exists()):
+        p.error('Provide conditions and a new audit directory together')
     if a.output.exists():
         p.error('出力先は新しい測定フォルダにしてください')
     a.output.parent.mkdir(parents=True,exist_ok=True)
@@ -95,7 +144,32 @@ def main():
         temp = Path(temp)
         data,site = temp/'data',temp/'site'
         data.mkdir()
-        measurement(a.recording,data,a.title)
+        if a.conditions:
+            import hashlib
+            conditions = json.loads(a.conditions.read_text())
+            reference = a.conditions.parent / conditions['validation_reference']
+            validation = json.loads(reference.read_text())
+            if (validation['T_rgb_from_l2'] != conditions['T_rgb_from_l2']
+                    or validation['camera_serial'] != conditions['camera_serial']
+                    or not any(scene['role'] == 'held_out' for scene in validation['scenes'])):
+                raise ValueError('Calibration differs from held-out report')
+            audit = temp/'audit'
+            static_measurement(a.recording,data,a.title,conditions,audit)
+            (audit/'validation.json').write_bytes(reference.read_bytes())
+            inputs = [a.recording/name for name in ('manifest.json','external-lidar.jsonl','rgbd.jsonl')]
+            inputs.extend(a.recording.glob('intrinsics-*'))
+            inputs.extend(a.recording/row['file'] for row in rows(a.recording/'rgbd.jsonl'))
+            inputs.extend([a.conditions,reference,Path(__file__),Path(__file__).with_name('color_l2.py')])
+            with (audit/'inputs.jsonl').open('w') as manifest:
+                for path in inputs:
+                    digest = hashlib.sha256()
+                    with path.open('rb') as stream:
+                        for block in iter(lambda: stream.read(1024*1024),b''):
+                            digest.update(block)
+                    manifest.write(json.dumps(dict(path=str(path.resolve()),bytes=path.stat().st_size,
+                                                   sha256=digest.hexdigest()),ensure_ascii=False)+'\n')
+        else:
+            measurement(a.recording,data,a.title)
         build(data,site,'hosted')
         (site/'title.txt').write_text(a.title+'\n',encoding='utf-8')
         index = site/'index.html'
@@ -116,6 +190,10 @@ def main():
                 f'<li>{html.escape(k)} · {v} 件</li>' for k,v in sorted(totals.items()))+'</ul></details>'
             page = page.replace('</aside>',summary+'</aside>')
         index.write_text(page,encoding='utf-8')
+        if a.audit:
+            import shutil
+            a.audit.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copytree(temp/'audit',a.audit)
         site.rename(a.output)
 
 

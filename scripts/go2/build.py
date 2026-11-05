@@ -51,6 +51,7 @@ def read_assets(data_dir):
     manifest = json.loads((data_dir / 'manifest.json').read_text(encoding='utf-8'))
     rgb = json.loads((data_dir / 'rgb.json').read_text(encoding='utf-8'))
     refs = {r['file'] for r in manifest['runs']} | {r['file'] for r in rgb.values()}
+    refs.update(r['colors'] for r in manifest['runs'] if 'colors' in r)
     assets = {}
     for ref in sorted(refs):
         parts = ref.split('/')
@@ -61,6 +62,8 @@ def read_assets(data_dir):
             raise ValueError('Asset outside data directory: ' + ref)
         assets[ref] = path.read_bytes()
     for run in manifest['runs']:
+        if 'colors' in run and len(assets[run['colors']]) != run['count'] * 3:
+            raise ValueError('Point color byte count mismatch')
         if len(assets[run['file']]) != run['count'] * 16:
             raise ValueError('Point-cloud byte count mismatch')
     for recording in rgb.values():
