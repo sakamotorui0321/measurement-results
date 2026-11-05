@@ -45,6 +45,23 @@ Python標準ライブラリだけで動きます。RealSense RGBと同期姿勢�
 
 ### Starling2
 
+**点群・花候補・元RGB画像と動画4本をまとめて作る**には、Ubuntuで実験フォルダを1つ指定します。
+
+```sh
+cd ~/measurement-viewers/measurement-results
+python3 scripts/import_measurement.py starling2 "/path/to/実験データ/starling2/YYYY-MM-DD_HHMMSS_実験名"
+```
+
+完了後、測定一覧の「3D点群・花候補・動画4本」を開きます。点群の赤い候補をクリックすると、対応する元RGB画像と検出枠が表示されます。画面上部から RGB、Depth、RGB・Depth左右比較、花検出枠付きRGBのMP4を再生できます。各15 fpsで、単体動画は各ストリームの全フレーム、左右比較はRGBに時刻が最も近い深度を使用します。
+
+標準の実験フォルダでは、動画4本を同じ研究室の「進捗/動画/実機/Starling2/日付_実験名/」にも保存します。それ以外の場所では実験の exports/ を使用します。保存先の親は STARLING2_VIDEO_ROOT で変更できます。解析途中のCSV・姿勢・点群・各段階の検証記録は実験の analysis/ 内の日時付きフォルダに残ります。再実行時は登録済みの同じ録画の結果を利用します。
+
+- 入力は確定済みの raw/voxl/recordings/realsense/ 内の録画（RGB・深度・時刻索引・clock.jsonl・同じ記録に結び付く calibration.json）と raw/pi/ 内の姿勢・時刻同期を含むROS bagです。raw/pc/FLIGHT_RESULT.json があれば記録IDを照合します。複数候補があり一意に特定できない場合は停止します。旧録画では、同一機体の確認記録と入力・校正ハッシュが一致する実験内の保存済み工場校正も利用できます。
+- このPCは設定済みです。ほかのUbuntuでは ROS 2 Jazzy、ビルド済みpx4_msgsを含むワークスペース、OpenCVのH.264対応、NumPy・SciPy・YOLO環境が必要です。変換は scripts/starling2_experiment.py から実行され、検出・深度投影・姿勢抽出・花のグループ化の実装も scripts/starling2/ に同梱しました（agricultural_support_ws の 91a928a を基にしています）。検出区間の水平移動が10 cm未満で進行方向を決められない場合は東を横軸とします。ROSメッセージの読み出しにはワークスペースの install 環境を使います。WSは STARLING2_WS（既定 ~/agricultural_support_ws）、YOLOのPythonは STARLING2_YOLO_PYTHON（既定 ~/.venvs/go2-processor/bin/python）、重みは STARLING2_WEIGHTS（既定 ~/.local/share/measurement-results/tomato_flower_yolov8n.pt）で設定できます。
+- 機体へのカメラ取付は従来の概測（水平・機首向き、前方3 cm・上方3 cm）を既定とし、実験側の config/mount.json を優先します。同じ向きと光学座標系を前提とし、取付条件が異なる場合は確認が必要です。花の位置は内部推定で、花群は同じ物理花であることを保証しません。
+
+**RGB・深度だけを確認する場合**は、従来通り個別録画とIDを指定できます。
+
 ```sh
 python3 scripts/import_measurement.py starling2 "/path/to/実験/raw/voxl/recordings/realsense/録画ID" 2026-11-05_103000_畝A --title "畝A・探索飛行"
 ```

@@ -1,0 +1,11 @@
+{
+  "reference_frame": "color_optical",
+  "translation_body_flu_m": [
+    0.03,
+    0,
+    0.03
+  ],
+  "orientation_confirmed": true,
+  "orientation": "forward level; optical to body FLU = [z,-x,-y]",
+  "measurement_quality": "user approximate measurement; translation uncertainty not quantified"
+}

@@ -2,3 +2,7 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .venv/
+
+/starling2/measurements/.*.lock
+/starling2/measurements/.import-*/
+/starling2/measurements/*_results/

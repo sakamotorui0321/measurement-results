@@ -11,11 +11,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('device', choices=['go2','starling2'])
     parser.add_argument('recording', type=Path)
-    parser.add_argument('id', help='YYYY-MM-DD_HHMMSS_測定名')
-    parser.add_argument('--title', required=True)
+    parser.add_argument('id', nargs='?', help='YYYY-MM-DD_HHMMSS_測定名')
+    parser.add_argument('--title')
     parser.add_argument('--bag', type=Path)
     parser.add_argument('--step', type=int, default=15)
     args = parser.parse_args()
+    if args.device == 'starling2' and args.id is None and not args.title and not args.bag and args.step == 15:
+        from starling2_experiment import import_experiment
+        import_experiment(args.recording)
+        return
+    if not args.id or not args.title:
+        parser.error('個別録画の取り込みには測定IDと --title が必要です')
     if not re.fullmatch(r'\d{4}-\d\d-\d\d_[\w-]+', args.id) or args.step < 1:
         parser.error('測定IDまたはstepが不正です')
     if args.device == 'go2':
